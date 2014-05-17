@@ -52,6 +52,8 @@ class PrinterStateConnection(SockJSConnection):
 
 		self._temperatureBacklog = []
 		self._temperatureBacklogMutex = threading.Lock()
+		self._position = {"x": 0, "y": 0, "z": 0}
+		self._positionMutex = threading.Lock()
 		self._logBacklog = []
 		self._logBacklogMutex = threading.Lock()
 		self._messageBacklog = []
@@ -103,6 +105,9 @@ class PrinterStateConnection(SockJSConnection):
 			temperatures = self._temperatureBacklog
 			self._temperatureBacklog = []
 
+		with self._positionMutex:
+			position = self._position
+
 		with self._logBacklogMutex:
 			logs = self._logBacklog
 			self._logBacklog = []
@@ -113,6 +118,7 @@ class PrinterStateConnection(SockJSConnection):
 
 		data.update({
 		"temperatures": temperatures,
+		"position": position,
 		"logs": logs,
 		"messages": messages
 		})
@@ -141,6 +147,10 @@ class PrinterStateConnection(SockJSConnection):
 	def addTemperature(self, data):
 		with self._temperatureBacklogMutex:
 			self._temperatureBacklog.append(data)
+
+	def setPosition(self, data):
+		with self._positionMutex:
+			self._position = data
 
 	def _onMovieDone(self, event, payload):
 		self.sendUpdateTrigger("timelapseFiles")

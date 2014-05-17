@@ -125,15 +125,15 @@ def jog():
 	if "x" in request.values.keys():
 		# jog x
 		x = request.values["x"]
-		printer.commands(["G91", "G1 X%s F%d" % (x, movementSpeedX), "G90"])
+		printer.commands(["G91", "G1 X%s F%d" % (x, movementSpeedX), "G90", "M114"])
 	if "y" in request.values.keys():
 		# jog y
 		y = request.values["y"]
-		printer.commands(["G91", "G1 Y%s F%d" % (y, movementSpeedY), "G90"])
+		printer.commands(["G91", "G1 Y%s F%d" % (y, movementSpeedY), "G90", "M114"])
 	if "z" in request.values.keys():
 		# jog z
 		z = request.values["z"]
-		printer.commands(["G91", "G1 Z%s F%d" % (z, movementSpeedZ), "G90"])
+		printer.commands(["G91", "G1 Z%s F%d" % (z, movementSpeedZ), "G90", "M114"])
 	if "homeXY" in request.values.keys():
 		# home x/y
 		printer.command("G28 X0 Y0")

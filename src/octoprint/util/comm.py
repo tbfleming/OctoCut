@@ -123,6 +123,9 @@ class MachineCom(object):
 		self._bedTargetTemp = 0
 		self._tempOffset = 0
 		self._bedTempOffset = 0
+		self._x = 0;
+		self._y = 0;
+		self._z = 0;
 		self._commandQueue = queue.Queue()
 		self._currentZ = None
 		self._heatupWaitStartTime = 0
@@ -544,6 +547,19 @@ class MachineCom(object):
 							self._heatupWaitTimeLost = t - self._heatupWaitStartTime
 							self._heatupWaitStartTime = t
 
+				##~~ Position processing
+				if ' X:' in line or line.startswith('X:'):
+					try:
+						self._x = float(self._regex_float.search(line.split('X:')[1]).group(0))
+						if ' Y:' in line:
+							self._y = float(self._regex_float.search(line.split(' Y:')[1]).group(0))
+						if ' Z:' in line:
+							self._z = float(self._regex_float.search(line.split(' Z:')[1]).group(0))
+						self._callback.mcPositionUpdate(self._x, self._y, self._z)
+					except ValueError:
+						# catch conversion issues, we'll rather just not get the temperature update instead of killing the connection
+						pass
+
 				##~~ SD Card handling
 				elif 'SD init fail' in line or 'volume.init failed' in line or 'openRoot failed' in line:
 					self._sdAvailable = False
@@ -704,7 +720,7 @@ class MachineCom(object):
 						elif not self._commandQueue.empty():
 							self._sendCommand(self._commandQueue.get())
 						else:
-							self._sendCommand("M105")
+							self._sendCommand("M114")  # CNCMILL hack: get position instead
 						tempRequestTimeout = getNewTimeout("communication")
 					# resend -> start resend procedure from requested line
 					elif line.lower().startswith("resend") or line.lower().startswith("rs"):
@@ -732,7 +748,7 @@ class MachineCom(object):
 					else:
 						# Even when printing request the temperature every 5 seconds.
 						if time.time() > tempRequestTimeout and not self.isStreaming():
-							self._commandQueue.put("M105")
+							self._sendCommand("M114")   # CNCMILL hack: get position instead
 							tempRequestTimeout = getNewTimeout("communication")
 
 						if "ok" in line and swallowOk:
@@ -1026,6 +1042,9 @@ class MachineComPrintCallback(object):
 		pass
 
 	def mcTempUpdate(self, temp, bedTemp, targetTemp, bedTargetTemp):
+		pass
+
+	def mcPositionUpdate(self, x, y, z):
 		pass
 
 	def mcStateChange(self, state):

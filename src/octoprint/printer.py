@@ -89,6 +89,7 @@ class Printer():
 			ratelimit=0.5,
 			updateCallback=self._sendCurrentDataCallbacks,
 			addTemperatureCallback=self._sendAddTemperatureCallbacks,
+			setPositionCallback=self._sendSetPositionCallbacks,
 			addLogCallback=self._sendAddLogCallbacks,
 			addMessageCallback=self._sendAddMessageCallbacks
 		)
@@ -112,6 +113,11 @@ class Printer():
 	def _sendAddTemperatureCallbacks(self, data):
 		for callback in self._callbacks:
 			try: callback.addTemperature(data)
+			except: pass
+
+	def _sendSetPositionCallbacks(self, data):
+		for callback in self._callbacks:
+			try: callback.setPosition(data)
 			except: pass
 
 	def _sendAddLogCallbacks(self, data):
@@ -307,6 +313,9 @@ class Printer():
 
 		self._stateMonitor.addTemperature({"currentTime": currentTimeUtc, "temp": self._temp, "bedTemp": self._bedTemp, "targetTemp": self._targetTemp, "targetBedTemp": self._targetBedTemp})
 
+	def _setPositionData(self, x, y, z):
+		self._stateMonitor.setPosition({"x": x, "y": y, "z": z})
+
 	def _setJobData(self, filename, filesize, sd):
 		if filename is not None:
 			self._selectedFile = {
@@ -387,6 +396,9 @@ class Printer():
 
 	def mcTempUpdate(self, temp, bedTemp, targetTemp, bedTargetTemp):
 		self._addTemperatureData(temp, bedTemp, targetTemp, bedTargetTemp)
+
+	def mcPositionUpdate(self, x, y, z):
+		self._setPositionData(x, y, z)
 
 	def mcStateChange(self, state):
 		"""
@@ -582,10 +594,11 @@ class Printer():
 		return self._gcodeLoader is not None
 
 class StateMonitor(object):
-	def __init__(self, ratelimit, updateCallback, addTemperatureCallback, addLogCallback, addMessageCallback):
+	def __init__(self, ratelimit, updateCallback, addTemperatureCallback, setPositionCallback, addLogCallback, addMessageCallback):
 		self._ratelimit = ratelimit
 		self._updateCallback = updateCallback
 		self._addTemperatureCallback = addTemperatureCallback
+		self._setPositionCallback = setPositionCallback
 		self._addLogCallback = addLogCallback
 		self._addMessageCallback = addMessageCallback
 
@@ -614,6 +627,10 @@ class StateMonitor(object):
 
 	def addTemperature(self, temperature):
 		self._addTemperatureCallback(temperature)
+		self._changeEvent.set()
+
+	def setPosition(self, data):
+		self._setPositionCallback(data)
 		self._changeEvent.set()
 
 	def addLog(self, log):
