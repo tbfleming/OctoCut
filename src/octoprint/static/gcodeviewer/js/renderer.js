@@ -23,10 +23,14 @@ GCODE.renderer = (function(){
     var scaleFactor = 1.1;
     var model;
     var initialized=false;
+    var showMachinePos = false;
+    var machineX = 0;
+    var machineY = 0;
     var renderOptions = {
         showMoves: true,
         showRetracts: true,
         colorGrid: "#bbbbbb",
+        machinePos: "#ff0000",
         extrusionWidth: 1,
 //        colorLine: ["#000000", "#aabb88",  "#ffe7a0", "#6e7700", "#331a00", "#44ba97", "#08262f", "#db0e00", "#ff9977"],
         colorLine: ["#000000", "#45c7ba",  "#a9533a", "#ff44cc", "#dd1177", "#eeee22", "#ffbb55", "#ff5511", "#777788"],
@@ -54,6 +58,7 @@ GCODE.renderer = (function(){
             drawLayer(layerNumStore+1, 0, GCODE.renderer.getLayerNumSegments(layerNumStore+1), true);
         }
         drawLayer(layerNumStore, progressStore.from, progressStore.to);
+        drawMachinePos();
     };
 
     function trackTransforms(ctx){
@@ -333,6 +338,23 @@ GCODE.renderer = (function(){
         ctx.stroke();
     };
 
+    var drawMachinePos = function(){
+        if(showMachinePos){
+            ctx.strokeStyle = renderOptions["machinePos"];
+            ctx.lineWidth = 1;
+
+            var p1 = ctx.transformedPoint(0,0);
+            var p2 = ctx.transformedPoint(canvas.width,canvas.height);
+
+            ctx.beginPath();
+            ctx.moveTo(machineX*zoomFactor-offsetModelX, p1.y);
+            ctx.lineTo(machineX*zoomFactor-offsetModelX, p2.y);
+            ctx.moveTo(p1.x, -machineY*zoomFactor-offsetModelY);
+            ctx.lineTo(p2.x, -machineY*zoomFactor-offsetModelY);
+            ctx.stroke();
+        }
+    }
+
 
 // ***** PUBLIC *******
     return {
@@ -354,6 +376,15 @@ GCODE.renderer = (function(){
         debugGetModel: function(){
             return model;
         },
+        setMachinePos: function(show, x, y){
+            if(showMachinePos != show || machineX != x || machineY != y){
+                showMachinePos = show;
+                machineX = x;
+                machineY = y;
+                return true;
+            }
+            return false;
+        },
         render: function(layerNum, fromProgress, toProgress){
             if(!initialized)this.init();
             if(!model){
@@ -369,6 +400,7 @@ GCODE.renderer = (function(){
                         drawLayer(layerNum+1, 0, this.getLayerNumSegments(layerNum+1), true);
                     }
                     drawLayer(layerNum, fromProgress, toProgress);
+                    drawMachinePos();
                 }else{
                     console.log("Got request to render non-existent layer!!");
                 }

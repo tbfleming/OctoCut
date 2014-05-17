@@ -299,6 +299,11 @@ GCODE.ui = (function(){
         updateLayerInfo: function(layerNum){
           printLayerInfo(layerNum);
         },
+        
+        renderAfterPosChange: function(){
+            if(sliderVer != null && sliderHor != null)
+                GCODE.renderer.render(sliderVer.slider("value"), sliderHor.slider("values")[0], sliderHor.slider("values")[1]);
+        },
 
         processOptions: function(){
             if(document.getElementById('sortLayersCheckbox').checked)GCODE.gCodeReader.setOption({sortLayers: true});

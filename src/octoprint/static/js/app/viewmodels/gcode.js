@@ -60,12 +60,16 @@ function GcodeViewModel(loginStateViewModel) {
         if(self.loadedFilename && self.loadedFilename == data.job.filename &&
             self.loadedFileMTime == data.job.mtime) {
             if (data.state.flags && (data.state.flags.printing || data.state.flags.paused)) {
+                GCODE.renderer.setMachinePos(data.state.flags.paused, data.position.x, data.position.y);
                 var cmdIndex = GCODE.gCodeReader.getCmdIndexForPercentage(data.progress.progress * 100);
                 if(cmdIndex){
                     GCODE.renderer.render(cmdIndex.layer, 0, cmdIndex.cmd);
                     GCODE.ui.updateLayerInfo(cmdIndex.layer);
                 }
+            } else if(GCODE.renderer.setMachinePos(true, data.position.x, data.position.y)) {
+                GCODE.ui.renderAfterPosChange();
             }
+
             self.errorCount = 0
         } else if (data.job.filename) {
             self.loadFile(data.job.filename, data.job.mtime);
