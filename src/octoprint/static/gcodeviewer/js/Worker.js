@@ -222,6 +222,13 @@
         var dcExtrude=false;
         var assumeNonDC = false;
 
+        // CNCMILL hack: force everything into 1 layer
+        z = 10;
+        layer = model.length;
+        z_heights[z] = layer;
+        sendLayer = layer;
+        sendLayerZ = z;
+
         for(var i=0;i<gcode.length;i++){
             x=undefined;
             y=undefined;
@@ -240,11 +247,14 @@
                     switch(argChar = args[j].charAt(0).toLowerCase()){
                         case 'x':
                             x=args[j].slice(1);
+                            extrude = 1; // CNCMILL hack: assume always extruding
                             break;
                         case 'y':
                             y=args[j].slice(1);
+                            extrude = 1; // CNCMILL hack: assume always extruding
                             break;
                         case 'z':
+                            /* CNCMILL hack: force everything into 1 layer
                             z=args[j].slice(1);
                             z = Number(z);
                             if(z == prevZ) continue;
@@ -258,10 +268,12 @@
                             sendLayerZ = z;
                             prevZ = z;
                             break;
+                            */
                         case 'e':
                         case 'a':
                         case 'b':
                         case 'c':
+                            /* CNCMILL hack: assume always extruding
                             assumeNonDC = true;
                             numSlice = parseFloat(args[j].slice(1)).toFixed(3);
 
@@ -286,7 +298,7 @@
                                 retract = 0;
                             }
                             prev_extrude[argChar] = numSlice;
-
+                            */
                             break;
                         case 'f':
                             numSlice = args[j].slice(1);
