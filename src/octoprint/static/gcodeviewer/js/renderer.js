@@ -347,10 +347,10 @@ GCODE.renderer = (function(){
             var p2 = ctx.transformedPoint(canvas.width,canvas.height);
 
             ctx.beginPath();
-            ctx.moveTo(machineX*zoomFactor-offsetModelX, p1.y);
-            ctx.lineTo(machineX*zoomFactor-offsetModelX, p2.y);
-            ctx.moveTo(p1.x, -machineY*zoomFactor-offsetModelY);
-            ctx.lineTo(p2.x, -machineY*zoomFactor-offsetModelY);
+            ctx.moveTo(machineX*zoomFactor, p1.y);
+            ctx.lineTo(machineX*zoomFactor, p2.y);
+            ctx.moveTo(p1.x, -machineY*zoomFactor);
+            ctx.lineTo(p2.x, -machineY*zoomFactor);
             ctx.stroke();
         }
     }
