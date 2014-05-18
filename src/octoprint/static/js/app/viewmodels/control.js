@@ -11,6 +11,7 @@ function ControlViewModel(loginStateViewModel, settingsViewModel) {
     self.isError = ko.observable(undefined);
     self.isReady = ko.observable(undefined);
     self.isLoading = ko.observable(undefined);
+    self.position = {};
 
     self.extrusionAmount = ko.observable(undefined);
     self.controls = ko.observableArray([]);
@@ -18,6 +19,9 @@ function ControlViewModel(loginStateViewModel, settingsViewModel) {
     self.feedbackControlLookup = {};
 
     self.fromCurrentData = function(data) {
+        self.position["X"] = data.position.x;
+        self.position["Y"] = data.position.y;
+        self.position["Z"] = data.position.z;
         self._processStateData(data.state);
     }
 
@@ -85,21 +89,39 @@ function ControlViewModel(loginStateViewModel, settingsViewModel) {
             multiplier *= -1;
         }
 
-        $.ajax({
-            url: AJAX_BASEURL + "control/jog",
-            type: "POST",
-            dataType: "json",
-            data: axis + "=" + ( distance * multiplier )
-        })
+        if (document.getElementById("fake-moves").checked) {
+            axis = axis.toUpperCase();
+            self.position[axis] = self.position[axis]  + distance * multiplier
+            self.sendCustomCommand({type:'commands',commands:['G92 ' + axis + self.position[axis], 'M114']})
+        } else {
+            $.ajax({
+                url: AJAX_BASEURL + "control/jog",
+                type: "POST",
+                dataType: "json",
+                data: axis + "=" + ( distance * multiplier )
+            })
+        }
     }
 
     self.sendHomeCommand = function(axis) {
-        $.ajax({
-            url: AJAX_BASEURL + "control/jog",
-            type: "POST",
-            dataType: "json",
-            data: "home" + axis
-        })
+        if (document.getElementById("fake-moves").checked) {
+            if(axis == 'XY') {
+                self.position['X'] = 0
+                self.position['Y'] = 0
+                self.sendCustomCommand({type:'commands',commands:['G92 X0Y0', 'M114']})
+            }
+            if(axis == 'Z') {
+                self.position['Z'] = 0
+                self.sendCustomCommand({type:'commands',commands:['G92 Z0', 'M114']})
+            }
+        } else {
+            $.ajax({
+                url: AJAX_BASEURL + "control/jog",
+                type: "POST",
+                dataType: "json",
+                data: "home" + axis
+            })
+        }
     }
 
     self.sendExtrudeCommand = function() {
