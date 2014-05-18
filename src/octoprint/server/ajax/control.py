@@ -137,6 +137,9 @@ def jog():
 	if "homeXY" in request.values.keys():
 		# home x/y
 		printer.command("G28 X0 Y0")
+	if "posX" in request.values.keys() and "posY" in request.values.keys():
+		# go to position
+		printer.commands(["G1 X%s Y%s F%d" % (request.values["posX"], request.values["posY"], movementSpeedX), "M114"])
 	if "homeZ" in request.values.keys():
 		# home z
 		printer.command("G28 Z0")

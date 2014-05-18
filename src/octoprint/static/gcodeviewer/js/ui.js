@@ -205,6 +205,7 @@ GCODE.ui = (function(){
                 GCODE.gCodeReader.processAnalyzeModelDone(data.msg);
                 GCODE.gCodeReader.passDataToRenderer();
                 initSliders();
+                GCODE.renderer.setClickCallback(controlViewModel.clickMove);
                 resultSet.push("Model size is: " + data.msg.modelSize.x.toFixed(2) + 'x' + data.msg.modelSize.y.toFixed(2) + 'x' + data.msg.modelSize.z.toFixed(2)+'mm<br>');
                 resultSet.push("Total filament used: " + data.msg.totalFilament.toFixed(2) + "mm<br>");
                 resultSet.push("Estimated print time: " + parseInt(parseFloat(data.msg.printTime)/60/60) + ":" + parseInt((parseFloat(data.msg.printTime)/60)%60) + ":" + parseInt(parseFloat(data.msg.printTime)%60) + "<br>");

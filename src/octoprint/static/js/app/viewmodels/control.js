@@ -103,6 +103,26 @@ function ControlViewModel(loginStateViewModel, settingsViewModel) {
         }
     }
 
+    self.clickMove = function(x, y) {
+        if (!document.getElementById("click-to-move").checked || self.isPrinting() && !self.isPaused())
+            return false;
+
+        self.position['X'] = x;
+        self.position['Y'] = y;
+
+        if (document.getElementById("fake-moves").checked)
+            self.sendCustomCommand({type:'commands',commands:['G92 X' + x.toFixed(4) + ' Y' + y.toFixed(4), 'M114']})
+        else
+            $.ajax({
+                url: AJAX_BASEURL + "control/jog",
+                type: "POST",
+                dataType: "json",
+                data: {posX:x.toFixed(4), posY:y.toFixed(4)}
+            })
+
+        return true;
+    }
+
     self.sendHomeCommand = function(axis) {
         if (document.getElementById("fake-moves").checked) {
             if(axis == 'XY') {

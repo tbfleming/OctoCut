@@ -23,6 +23,7 @@ GCODE.renderer = (function(){
     var scaleFactor = 1.1;
     var model;
     var initialized=false;
+    var clickCallback = function(x, y) {return false;};
     var showMachinePos = false;
     var machineX = 0;
     var machineY = 0;
@@ -141,6 +142,8 @@ GCODE.renderer = (function(){
             lastY = evt.offsetY || (evt.pageY - canvas.offsetTop);
             dragStart = ctx.transformedPoint(lastX,lastY);
             dragged = false;
+            if(clickCallback(dragStart.x/zoomFactor, -dragStart.y/zoomFactor))
+                dragStart = null;
         },false);
         canvas.addEventListener('mousemove',function(evt){
             lastX = evt.offsetX || (evt.pageX - canvas.offsetLeft);
@@ -154,7 +157,7 @@ GCODE.renderer = (function(){
         },false);
         canvas.addEventListener('mouseup',function(evt){
             dragStart = null;
-            if (!dragged) zoom(evt.shiftKey ? -1 : 1 );
+            //if (!dragged) zoom(evt.shiftKey ? -1 : 1 );
         },false);
         var zoom = function(clicks){
             var pt = ctx.transformedPoint(lastX,lastY);
@@ -362,6 +365,9 @@ GCODE.renderer = (function(){
             startCanvas();
             initialized = true;
             ctx.translate(10,gridSizeY*zoomFactor+20);
+        },
+        setClickCallback: function(callback){
+            clickCallback = callback;
         },
         setOption: function(options){
             for(var opt in options){
