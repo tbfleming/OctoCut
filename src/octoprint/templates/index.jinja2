@@ -87,6 +87,55 @@
         <div class="container octoprint-container">
             <div class="row">
                 <div class="accordion span4">
+                    <div class="accordion-group" id="control_accordion">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" href="#control"><i class="icon-info-sign"></i> Control</a>
+                        </div>
+                        <div class="accordion-body collapse in" id="control">
+                            <div class="accordion-inner">
+                                <!-- XY jogging control panel -->
+                                <div class="jog-panel">
+                                    <h1 style="text-align: center">X/Y</h1>
+                                    <div>
+                                        <button class="btn box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendJogCommand('y',1) }"><i class="icon-arrow-up"></i></button>
+                                    </div>
+                                    <div>
+                                        <button class="btn box pull-left" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendJogCommand('x',-1) }"><i class="icon-arrow-left"></i></button>
+                                        <button class="btn box pull-left" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendHomeCommand('XY') }"><i class="icon-home"></i></button>
+                                        <button class="btn box pull-left" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendJogCommand('x',1) }"><i class="icon-arrow-right"></i></button>
+                                    </div>
+                                    <div>
+                                        <button class="btn box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendJogCommand('y',-1) }"><i class="icon-arrow-down"></i></button>
+                                    </div>
+                                </div>
+                                <!-- Z jogging control panel -->
+                                <div class="jog-panel">
+                                    <h1 style="text-align: center">Z</h1>
+                                    <div>
+                                        <button class="btn box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendJogCommand('z',1) }"><i class="icon-arrow-up"></i></button>
+                                    </div>
+                                    <div>
+                                        <button class="btn box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendHomeCommand('Z') }"><i class="icon-home"></i></button>
+                                    </div>
+                                    <div>
+                                        <button class="btn box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendJogCommand('z',-1) }"><i class="icon-arrow-down"></i></button>
+                                    </div>
+                                </div>
+                                <!-- Jog distance -->
+                                <div class="distance">
+                                    <div class="btn-group" data-toggle="buttons-radio" id="jog_distance">
+                                        <button type="button" class="btn" data-distance="0.1" data-bind="enable: loginState.isUser()">0.1</button>
+                                        <button type="button" class="btn" data-distance="1" data-bind="enable: loginState.isUser()">1</button>
+                                        <button type="button" class="btn active" data-distance="10" data-bind="enable: loginState.isUser()">10</button>
+                                        <button type="button" class="btn" data-distance="100" data-bind="enable: loginState.isUser()">100</button>
+                                    </div>
+                                </div>
+                                <button class="btn control-box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendCustomCommand({type:'command',command:'M18'}) }">
+                                    <i class="icon-off"></i>&nbsp;Motors off
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="accordion-group" data-bind="visible: loginState.isUser" id="connection_accordion">
                         <div class="accordion-heading">
                             <a class="accordion-toggle" data-toggle="collapse" href="#connection"><i class="icon-signal"></i> Connection</a>
@@ -240,8 +289,8 @@
                 <div class="span8 tabbable">
                     <ul class="nav nav-tabs" id="tabs">
                         <!--<li><a href="#temp" data-toggle="tab">Temperature</a></li>-->
-                        <li class="active"><a href="#control" data-toggle="tab">Control</a></li>
-                        {% if enableGCodeVisualizer %}<li><a href="#gcode" data-toggle="tab">GCode Viewer</a></li>{% endif %}
+                        <!--<li class="active"><a href="#control" data-toggle="tab">Control</a></li>-->
+                        {% if enableGCodeVisualizer %}<li class="active"><a href="#gcode" data-toggle="tab">GCode Viewer</a></li>{% endif %}
                         <li><a href="#term" data-toggle="tab">Terminal</a></li>
                         {% if enableTimelapse %}<li><a href="#timelapse" data-toggle="tab">Timelapse</a></li>{% endif %}
                     </ul>
@@ -336,112 +385,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane active" id="control">
-                            {% if webcamStream %}
-                            <div id="webcam_container">
-                                <img id="webcam_image" data-bind="css: { flipH: settings.webcam_flipH(), flipV: settings.webcam_flipV() }">
-                            </div>
-                            {% endif %}
-
-                            <div class="jog-panel" style="display: none;" data-bind="visible: loginState.isUser">
-                                <!-- XY jogging control panel -->
-                                <div class="jog-panel">
-                                    <h1>X/Y</h1>
-                                    <div>
-                                        <button class="btn box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendJogCommand('y',1) }"><i class="icon-arrow-up"></i></button>
-                                    </div>
-                                    <div>
-                                        <button class="btn box pull-left" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendJogCommand('x',-1) }"><i class="icon-arrow-left"></i></button>
-                                        <button class="btn box pull-left" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendHomeCommand('XY') }"><i class="icon-home"></i></button>
-                                        <button class="btn box pull-left" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendJogCommand('x',1) }"><i class="icon-arrow-right"></i></button>
-                                    </div>
-                                    <div>
-                                        <button class="btn box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendJogCommand('y',-1) }"><i class="icon-arrow-down"></i></button>
-                                    </div>
-                                </div>
-                                <!-- Z jogging control panel -->
-                                <div class="jog-panel">
-                                    <h1>Z</h1>
-                                    <div>
-                                        <button class="btn box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendJogCommand('z',1) }"><i class="icon-arrow-up"></i></button>
-                                    </div>
-                                    <div>
-                                        <button class="btn box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendHomeCommand('Z') }"><i class="icon-home"></i></button>
-                                    </div>
-                                    <div>
-                                        <button class="btn box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendJogCommand('z',-1) }"><i class="icon-arrow-down"></i></button>
-                                    </div>
-                                </div>
-                                <!-- Jog distance -->
-                                <div class="distance">
-                                    <div class="btn-group" data-toggle="buttons-radio" id="jog_distance">
-                                        <button type="button" class="btn" data-distance="0.1" data-bind="enable: loginState.isUser()">0.1</button>
-                                        <button type="button" class="btn" data-distance="1" data-bind="enable: loginState.isUser()">1</button>
-                                        <button type="button" class="btn active" data-distance="10" data-bind="enable: loginState.isUser()">10</button>
-                                        <button type="button" class="btn" data-distance="100" data-bind="enable: loginState.isUser()">100</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Extrusion control panel 
-                            <div class="jog-panel" style="display: none;" data-bind="visible: loginState.isUser">
-                                <h1>E</h1>
-                                <div>
-                                    <div class="input-append control-box">
-                                        <input type="text" class="input-mini text-right" data-bind="value: extrusionAmount, enable: isOperational() && !isPrinting() && loginState.isUser(), attr: {placeholder: 5}">
-                                        <span class="add-on">mm</span>
-                                    </div>
-                                    <button class="btn control-box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendExtrudeCommand() }">Extrude</button>
-                                    <button class="btn control-box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendRetractCommand() }">Retract</button>
-                                </div>
-                            </div> -->
-                            <!-- General control panel -->
-                            <div class="jog-panel" style="display: none;" data-bind="visible: loginState.isUser">
-                                <h1>General</h1>
-                                <div>
-                                    <button class="btn control-box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendCustomCommand({type:'command',command:'M18'}) }"><i class="icon-off"></i>&nbsp;Motors off</button>
-                                    <!--<button class="btn control-box" data-bind="enable: isOperational() && loginState.isUser(), click: function() { $root.sendCustomCommand({type:'command',command:'M106'}) }">Fans on</button>-->
-                                    <!--<button class="btn control-box" data-bind="enable: isOperational() && loginState.isUser(), click: function() { $root.sendCustomCommand({type:'command',command:'M106 S0'}) }">Fans off</button>-->
-                                </div>
-                            </div>
-
-                            <!-- Container for custom controls -->
-                            <div style="clear: both; display: none;" data-bind="visible: loginState.isUser, template: { name: $root.displayMode, foreach: controls }"></div>
-
-                            <!-- Templates for custom controls -->
-                            <script type="text/html" id="customControls_sectionTemplate">
-                                <h1 data-bind="text: name"></h1>
-
-                                <div data-bind="template: { name: $root.displayMode, foreach: children }"></div>
-                            </script>
-                            <script type="text/html" id="customControls_commandTemplate">
-                                <form class="form-inline">
-                                    <button class="btn" data-bind="text: name, enable: $root.isOperational() && $root.loginState.isUser(), click: function() { $root.sendCustomCommand($data) }"></button>
-                                </form>
-                            </script>
-                            <script type="text/html" id="customControls_feedbackCommandTemplate">
-                                <form class="form-inline">
-                                    <button class="btn" data-bind="text: name, enable: $root.isOperational() && $root.loginState.isUser(), click: function() { $root.sendCustomCommand($data) }"></button> <span data-bind="text: output"></span>
-                                </form>
-                            </script>
-                            <script type="text/html" id="customControls_feedbackTemplate">
-                                <div>
-                                    <strong data-bind="text: name"></strong>: <span data-bind="text: output"></span>
-                                </div>
-                            </script>
-                            <script type="text/html" id="customControls_parametricCommandTemplate">
-                                <form class="form-inline">
-                                    <!-- ko foreach: input -->
-                                        <label data-bind="text: name"></label>
-                                        <input type="text" class="input-small" data-bind="attr: {placeholder: name}, value: value">
-                                    <!-- /ko -->
-                                    <button class="btn" data-bind="text: name, enable: $root.isOperational() && $root.loginState.isUser(), click: function() { $root.sendCustomCommand($data) }"></button>
-                                </form>
-                            </script>
-                            <script type="text/html" id="customControls_emptyTemplate"><div></div></script>
-                            <!-- End of templates for custom controls -->
-                        </div>
                         {% if enableGCodeVisualizer %}
-                        <div class="tab-pane" id="gcode">
+                        <div class="tab-pane active" id="gcode">
                             <canvas id="canvas" width="572" height="588"></canvas>
                             <div id="slider-vertical"></div>
                             <div id="slider-horizontal"></div>
@@ -621,7 +566,7 @@
                 {% endif %}
                 <ul class="pull-right">
                     <li><a href="http://octoprint.org"><i class="icon-home"></i> Homepage</a></li>
-                    <li><a href="https://github.com/foosel/OctoPrint/"><i class="icon-download"></i> Sourcecode</a></li>
+                    <li><a href="https://github.com/tbfleming/OctoCut/"><i class="icon-download"></i> Sourcecode</a></li>
                     <li><a href="https://github.com/foosel/OctoPrint/wiki"><i class="icon-book"></i> Documentation</a></li>
                     <li><a href="https://github.com/foosel/OctoPrint/issues"><i class="icon-flag"></i> Bugs and Requests</a></li>
                 </ul>
