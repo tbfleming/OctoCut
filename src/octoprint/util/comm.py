@@ -213,11 +213,11 @@ class MachineCom(object):
 			return "Operational"
 		if self._state == self.STATE_PRINTING:
 			if self.isSdFileSelected():
-				return "Printing from SD"
+				return "Running from SD"
 			elif self.isStreaming():
 				return "Sending file to SD"
 			else:
-				return "Printing"
+				return "Running"
 		if self._state == self.STATE_PAUSED:
 			return "Paused"
 		if self._state == self.STATE_CLOSED:

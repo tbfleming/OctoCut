@@ -115,13 +115,13 @@
                             <div class="accordion-inner">
                                 Machine State: <strong data-bind="text: stateString"></strong><br>
                                 File: <strong data-bind="text: filename"></strong>&nbsp;<strong data-bind="visible: sd">(SD)</strong><br>
-                                Filament: <strong data-bind="text: filament"></strong><br>
-                                Estimated Print Time: <strong data-bind="text: estimatedPrintTime"></strong><br>
+                                <!--Filament: <strong data-bind="text: filament"></strong><br>-->
+                                Estimated Run Time: <strong data-bind="text: estimatedPrintTime"></strong><br>
                                 Timelapse: <strong data-bind="text: timelapseString"></strong><br>
                                 Height: <strong data-bind="text: heightString"></strong><br>
-                                Print Time: <strong data-bind="text: printTime"></strong><br>
-                                Print Time Left: <strong data-bind="text: printTimeLeft"></strong><br>
-                                Printed: <strong data-bind="text: byteString"></strong><br>
+                                Run Time: <strong data-bind="text: printTime"></strong><br>
+                                Run Time Left: <strong data-bind="text: printTimeLeft"></strong><br>
+                                Progress: <strong data-bind="text: byteString"></strong><br>
 
                                 <div class="progress">
                                     <div class="bar" id="job_progressBar" data-bind="style: { width: progressString() + '%' }"></div>
@@ -239,15 +239,15 @@
 
                 <div class="span8 tabbable">
                     <ul class="nav nav-tabs" id="tabs">
-                        <li class="active"><a href="#temp" data-toggle="tab">Temperature</a></li>
-                        <li><a href="#control" data-toggle="tab">Control</a></li>
+                        <!--<li><a href="#temp" data-toggle="tab">Temperature</a></li>-->
+                        <li class="active"><a href="#control" data-toggle="tab">Control</a></li>
                         {% if enableGCodeVisualizer %}<li><a href="#gcode" data-toggle="tab">GCode Viewer</a></li>{% endif %}
                         <li><a href="#term" data-toggle="tab">Terminal</a></li>
                         {% if enableTimelapse %}<li><a href="#timelapse" data-toggle="tab">Timelapse</a></li>{% endif %}
                     </ul>
 
                     <div class="tab-content">
-                        <div class="tab-pane active" id="temp">
+                        <div class="tab-pane" id="temp">
                             {% if enableTemperatureGraph %}
                             <div class="row" style="padding-left: 20px">
                                 <div id="temperature-graph"></div>
@@ -336,7 +336,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane" id="control">
+                        <div class="tab-pane active" id="control">
                             {% if webcamStream %}
                             <div id="webcam_container">
                                 <img id="webcam_image" data-bind="css: { flipH: settings.webcam_flipH(), flipV: settings.webcam_flipV() }">
@@ -382,7 +382,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- Extrusion control panel -->
+                            <!-- Extrusion control panel 
                             <div class="jog-panel" style="display: none;" data-bind="visible: loginState.isUser">
                                 <h1>E</h1>
                                 <div>
@@ -393,14 +393,14 @@
                                     <button class="btn control-box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendExtrudeCommand() }">Extrude</button>
                                     <button class="btn control-box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendRetractCommand() }">Retract</button>
                                 </div>
-                            </div>
+                            </div> -->
                             <!-- General control panel -->
                             <div class="jog-panel" style="display: none;" data-bind="visible: loginState.isUser">
                                 <h1>General</h1>
                                 <div>
                                     <button class="btn control-box" data-bind="enable: isOperational() && !isPrinting() && loginState.isUser(), click: function() { $root.sendCustomCommand({type:'command',command:'M18'}) }"><i class="icon-off"></i>&nbsp;Motors off</button>
-                                    <button class="btn control-box" data-bind="enable: isOperational() && loginState.isUser(), click: function() { $root.sendCustomCommand({type:'command',command:'M106'}) }">Fans on</button>
-                                    <button class="btn control-box" data-bind="enable: isOperational() && loginState.isUser(), click: function() { $root.sendCustomCommand({type:'command',command:'M106 S0'}) }">Fans off</button>
+                                    <!--<button class="btn control-box" data-bind="enable: isOperational() && loginState.isUser(), click: function() { $root.sendCustomCommand({type:'command',command:'M106'}) }">Fans on</button>-->
+                                    <!--<button class="btn control-box" data-bind="enable: isOperational() && loginState.isUser(), click: function() { $root.sendCustomCommand({type:'command',command:'M106 S0'}) }">Fans off</button>-->
                                 </div>
                             </div>
 
