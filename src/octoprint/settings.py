@@ -122,6 +122,8 @@ default_settings = {
 		"key": ''.join('%02X' % ord(z) for z in uuid.uuid4().bytes)
 	},
 	"terminalFilters": [
+		{ "name": "Suppress ok", "regex": "(Recv: ok)" },
+		{ "name": "Suppress M114 requests/responses", "regex": "(Send: M114)|(Recv: X:)" },
 		{ "name": "Suppress M105 requests/responses", "regex": "(Send: M105)|(Recv: ok T:)" },
 		{ "name": "Suppress M27 requests/responses", "regex": "(Send: M27)|(Recv: SD printing byte)" }
 	],
