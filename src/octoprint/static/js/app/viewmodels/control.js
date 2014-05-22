@@ -11,6 +11,9 @@ function ControlViewModel(loginStateViewModel, settingsViewModel) {
     self.isError = ko.observable(undefined);
     self.isReady = ko.observable(undefined);
     self.isLoading = ko.observable(undefined);
+    self.x = ko.observable(undefined);
+    self.y = ko.observable(undefined);
+    self.z = ko.observable(undefined);
     self.position = {};
 
     self.extrusionAmount = ko.observable(undefined);
@@ -19,6 +22,9 @@ function ControlViewModel(loginStateViewModel, settingsViewModel) {
     self.feedbackControlLookup = {};
 
     self.fromCurrentData = function(data) {
+        self.x(data.position.x);
+        self.y(data.position.y);
+        self.z(data.position.z);
         self.position["X"] = data.position.x;
         self.position["Y"] = data.position.y;
         self.position["Z"] = data.position.z;
